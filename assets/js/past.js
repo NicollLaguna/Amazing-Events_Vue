@@ -1,4 +1,37 @@
-const $main = document.getElementById("main")
+const {createApp} = Vue
+const app = createApp({
+    data(){
+        return{
+            eventosPasados: [],
+            fecha:  undefined,
+            categorias : [],
+            checked : [],
+            eventosFiltrados : [],
+            valueBusqueda: '',
+            filtradasPasado: []
+        }
+    },
+    created(){
+        fetch("https://mindhub-xj03.onrender.com/api/amazing")
+        .then(Response => Response.json())
+        .then(({ events , currentDate })  => {
+            this.fecha = currentDate
+            this.eventosPasados = events.filter(evento => evento.date < this.fecha)
+            this.categorias = [...new Set(events.map(event => event.category))]
+            this.filtradasPasado = events.filter(evento => evento.date < this.fecha)
+        })
+    },
+    methods : {
+        filtro(){
+            this.filtradasPasado = this.eventosPasados.filter( evento => {
+                return evento.name.toLowerCase().includes(this.valueBusqueda.toLowerCase())
+                && (this.checked.includes(evento.category) || this.checked.length == 0)
+            })
+        },},})
+        
+app.mount('#main')
+
+/* const $main = document.getElementById("main")
 const $cajacheck = document.getElementById("cajacheck")
 const $buscador = document.getElementById('buscador')
 
@@ -50,8 +83,7 @@ function ponerCartas ( listaCartas, elemento ){
         elemento.innerHTML =  mensaje()
     }
     else {listaCartas.forEach(carta => template+=crearCarta(carta))
-        elemento.innerHTML = template   }
-    
+        elemento.innerHTML = template   }   
 } 
 ponerCartas(eventspast,$main) 
 
@@ -94,4 +126,4 @@ function filtroCruzado(eventspast){
 
 function mensaje(){
     return `<h2>Evento no disponible</h2>`
-}
+} */
